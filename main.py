@@ -1,4 +1,10 @@
-import numpy as np
+from Net import *
 
-def sigmoid(z):
-    return 1/(1+np.exp(-z))
+topo = list()
+topo.append(2)
+topo.append(3)
+topo.append(3)
+topo.append(2)
+n = Net(topo)
+
+print(str(n))
