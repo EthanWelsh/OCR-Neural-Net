@@ -15,12 +15,11 @@ class Neuron:
         self.gradient = 0.0
         self.outputValue = 0
 
+        self.neuronNumber = neuronNumber
+
         if previousLayer == 0:
             self.weights.append(1)
         else:
-            self.neuronNumber = neuronNumber
-
-
             # Give a random weight between 0 and 1 for each input
             for i in range(0, previousLayer):
                 self.weights.append(random.uniform(0.0, 1.0))
@@ -46,7 +45,7 @@ class Neuron:
             sum += neuron.getOutputValue() * self.weights[neuronNumber] #output value * connection weight
             neuronNumber += 1
 
-        return self.sigmoid(sum) # apply transfer function
+        self.outputValue = self.sigmoid(sum) # apply transfer function
 
     # Transfer function
     def sigmoid (self, x):
@@ -81,19 +80,13 @@ class Neuron:
         for n in range(0, len(previousLayer)):
             current = previousLayer[n]
 
-            print(self.neuronNumber)
-
-            try: ### TODO TODO TODO
-                oldDeltaWeight = current.weights[self.neuronNumber] # weight from current to us
-            except IndexError:
-                print("INDEX ERROR ON", self.neuronNumber)
-
-            print(oldDeltaWeight)
+            #oldDeltaWeight = current.weights[self.neuronNumber] # weight from current to us
+            oldDeltaWeight = self.deltaWeights[current.neuronNumber] # weight from current to us
 
             newDeltaWeight = self.eta * current.getOutputValue() * self.gradient + self.alpha * oldDeltaWeight
 
-            current.deltaWeights[self.neuronNumber] = newDeltaWeight
-            current.weights[self.neuronNumber] += newDeltaWeight
+            self.deltaWeights[current.neuronNumber] = newDeltaWeight
+            self.weights[current.neuronNumber] += newDeltaWeight
 
     # Get string representation of neuron
     def __str__(self):
