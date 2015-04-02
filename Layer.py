@@ -9,7 +9,6 @@ class Layer:
 
         if previousLayer == None:
 
-
             for x in range(0, numberOfNeurons + 1): # + 1 for bias neuron
                 self.neurons.append(Neuron(x))
         else:
