@@ -1,13 +1,13 @@
 import math
 import random
 
-class Neuron:
 
-    eta = .15 # learning rate
-    alpha = .5 #momentum
+class Neuron:
+    eta = .15  # learning rate
+    alpha = .5  # momentum
 
     # Normal constructor
-    def __init__(self, neuronNumber, previousLayer = 0):
+    def __init__(self, neuronNumber, previousLayer=0):
 
         self.weights = list()
         self.deltaWeights = list()
@@ -42,18 +42,18 @@ class Neuron:
 
         neuronNumber = 0
         for neuron in previousLayer:
-            sum += neuron.getOutputValue() * self.weights[neuronNumber] #output value * connection weight
+            sum += neuron.getOutputValue() * self.weights[neuronNumber]  # output value * connection weight
             neuronNumber += 1
 
-        self.outputValue = self.sigmoid(sum) # apply transfer function
+        self.outputValue = self.sigmoid(sum)  # apply transfer function
 
     # Transfer function
-    def sigmoid (self, x):
+    def sigmoid(self, x):
         return math.tanh(x)
 
     # Transfer function derivative
-    def dsigmoid (self, y):
-        return 1 - y**2
+    def dsigmoid(self, y):
+        return 1 - y ** 2
 
     # Calculates the gradients of the output layer for use in back propogation
     def calculateOutputGradients(self, targetValue):
@@ -72,7 +72,10 @@ class Neuron:
 
         sum = 0.0
         for neuron in range(0, len(nextLayer) - 1):
-            sum += self.weights[neuron] * nextLayer[neuron].gradient
+            thisWeight = self.weights[neuron]
+            gradientToNextLayer = nextLayer[neuron].gradient
+
+            sum += thisWeight * gradientToNextLayer
         return sum
 
     # Given the previous layer, will adjust input weights in accordance with gradient and delta weight
@@ -80,8 +83,8 @@ class Neuron:
         for n in range(0, len(previousLayer)):
             current = previousLayer[n]
 
-            #oldDeltaWeight = current.weights[self.neuronNumber] # weight from current to us
-            oldDeltaWeight = self.deltaWeights[current.neuronNumber] # weight from current to us
+            # oldDeltaWeight = current.weights[self.neuronNumber] # weight from current to us
+            oldDeltaWeight = self.deltaWeights[current.neuronNumber]  # weight from current to us
 
             newDeltaWeight = self.eta * current.getOutputValue() * self.gradient + self.alpha * oldDeltaWeight
 

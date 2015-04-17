@@ -7,6 +7,7 @@ def trainNet(net, inputValues, expectedOutputValues):
     results = net.getResults()
     net.backProp(expectedOutputValues)
 
+
 def trainII(net):
     ins = list()
     outs = list()
@@ -14,6 +15,7 @@ def trainII(net):
     ins.append(1)
     outs.append(0)
     trainNet(net, ins, outs)
+
 
 def trainOO(net):
     ins = list()
@@ -23,6 +25,7 @@ def trainOO(net):
     outs.append(0)
     trainNet(net, ins, outs)
 
+
 def trainOI(net):
     ins = list()
     outs = list()
@@ -31,6 +34,7 @@ def trainOI(net):
     outs.append(1)
     trainNet(net, ins, outs)
 
+
 def trainIO(net):
     ins = list()
     outs = list()
@@ -38,6 +42,7 @@ def trainIO(net):
     ins.append(0)
     outs.append(1)
     trainNet(net, ins, outs)
+
 
 def printResults(net):
     ins = list()
@@ -52,7 +57,6 @@ def printResults(net):
     net.feedForward(ins)
     print("0 ^ 1 == 1 ==", net.getResults().getOutputs()[0])
 
-
     ins = list()
     ins.append(1)
     ins.append(1)
@@ -65,13 +69,13 @@ def printResults(net):
     net.feedForward(ins)
     print("0 ^ 0 == 0 ==", net.getResults().getOutputs()[0])
 
+
 topo = list()
 topo.append(2)
 topo.append(3)
 topo.append(3)
 topo.append(1)
 net = Net(topo)
-
 
 for i in range(0, 500):
     r = random.randint(0, 3)

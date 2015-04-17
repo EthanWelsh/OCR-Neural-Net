@@ -1,20 +1,19 @@
 from Neuron import *
 
-class Layer:
 
+class Layer:
     # Normal constructor
-    def __init__(self, numberOfNeurons, previousLayer = None):
+    def __init__(self, numberOfNeurons, previousLayer=None):
 
         self.neurons = list()
 
         if previousLayer == None:
 
-            for x in range(0, numberOfNeurons + 1): # + 1 for bias neuron
+            for x in range(0, numberOfNeurons + 1):  # + 1 for bias neuron
                 self.neurons.append(Neuron(x))
         else:
-            for x in range(0, numberOfNeurons + 1): # + 1 for bias neuron
+            for x in range(0, numberOfNeurons + 1):  # + 1 for bias neuron
                 self.neurons.append(Neuron(x, len(previousLayer)))
-
 
         self.biasNeuron = self.neurons[numberOfNeurons]
         self.biasNeuron.setOutputValue(1.0)

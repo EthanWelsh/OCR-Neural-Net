@@ -1,7 +1,7 @@
 from Layer import *
 
-class Net:
 
+class Net:
     m_error = 0.0
 
     def __init__(self, topology):
@@ -18,7 +18,6 @@ class Net:
         prevLayer = self.input
 
         for i in range(1, len(topology)):
-
             sizeOfLayer = topology[i]
             self.layers.append(Layer(sizeOfLayer, prevLayer))
             prevLayer = self.layers[len(self.layers) - 1]
@@ -28,11 +27,11 @@ class Net:
     # Given inputs, propagate through net and produce outputs
     def feedForward(self, inputValues):
 
-        for n in range (0, len(self.input) - 1): # set inputs
+        for n in range(0, len(self.input) - 1):  # set inputs
             self.input[n].setOutputValue(inputValues[n])
 
-        for layer in range(1, len(self.layers)): # for every layer
-            for neuron in self.layers[layer]: # feedForward every neuron
+        for layer in range(1, len(self.layers)):  # for every layer
+            for neuron in self.layers[layer]:  # feedForward every neuron
                 neuron.feedForward(self.layers[layer - 1])
 
     # Express target values for the current input and adjusts network accordingly
@@ -58,9 +57,9 @@ class Net:
             nextLayer = self.layers[layerNumber + 1]
 
             for neuron in thisLayer:
-               neuron.calculateHiddenGradients(nextLayer)
+                neuron.calculateHiddenGradients(nextLayer)
 
-            layerNumber-=1
+            layerNumber -= 1
 
         # Update connection weights
         layerNumber = len(self.layers) - 1
@@ -71,7 +70,7 @@ class Net:
             for neuron in currentLayer:
                 neuron.updateInputWeights(previousLayer)
 
-            layerNumber-=1
+            layerNumber -= 1
 
     def getResults(self):
         return self.output
