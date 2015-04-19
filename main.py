@@ -54,37 +54,37 @@ def printResults(net):
     ins.append(1)
     ins.append(0)
     net.feedForward(ins)
-    print("1 ^ 0 == 1 ==", net.getResults()[0])
+    print "1 ^ 0 == 1 ==", "{0:.2f}".format(net.getResults()[0])
 
     ins = list()
     ins.append(0)
     ins.append(1)
     net.feedForward(ins)
-    print("0 ^ 1 == 1 ==", net.getResults()[0])
+    print "0 ^ 1 == 1 ==", "{0:.2f}".format(net.getResults()[0])
 
     ins = list()
     ins.append(1)
     ins.append(1)
     net.feedForward(ins)
-    print("1 ^ 1 == 0 ==", net.getResults()[0])
+    print "1 ^ 1 == 0 ==", "{0:.2f}".format(net.getResults()[0])
 
     ins = list()
     ins.append(0)
     ins.append(0)
     net.feedForward(ins)
-    print("0 ^ 0 == 0 ==", net.getResults()[0])
+    print "0 ^ 0 == 0 ==", "{0:.2f}".format(net.getResults()[0])
 
 
 topo = list()
 topo.append(2)
-topo.append(2)
-topo.append(2)
+topo.append(3)
+topo.append(3)
 topo.append(1)
 net = Net(topo)
 
 print(net)
 
-for i in range(0, 1000):
+for i in range(0, 100000):
     r = random.randint(0, 3)
     if r == 0:
         trainII(net)
@@ -95,4 +95,8 @@ for i in range(0, 1000):
     else:
         trainOO(net)
 
-printResults(net)
+    if i % 10000 == 0:
+        printResults(net)
+        print
+
+print(net)
