@@ -24,7 +24,6 @@ def trainIO(net):
 
 
 def printResults(net):
-
     net.feedForward([1, 0])
     print "1 ^ 0 == 1 ==", "{0:.2f}".format(net.getResults()[0])
 

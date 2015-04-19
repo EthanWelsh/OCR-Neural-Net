@@ -3,12 +3,14 @@ import math
 
 
 class Connection:
+
     def __init__(self, w=0.0, d=0.0):
         self.weight = w
         self.deltaWeight = d
 
 
 class Neuron:
+
     eta = 0.15      # overall net learning rate
     alpha = 0.5     # momentum, multiplier of last deltaWeight
 
