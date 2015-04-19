@@ -1,110 +1,90 @@
-import math
 import random
+import math
+
+
+class Connection:
+    def __init__(self, w=0.0, d=0.0):
+        self.weight = w
+        self.deltaWeight = d
 
 
 class Neuron:
-    eta = .15  # learning rate
-    alpha = .5  # momentum
+    eta = 0.15      # overall net learning rate
+    alpha = 0.5     # momentum, multiplier of last deltaWeight
 
-    # Normal constructor
-    def __init__(self, neuronNumber, previousLayer=0):
+    def __init__(self, numOutputs, myIndex):
 
-        self.weights = list()
-        self.deltaWeights = list()
+        self.m_outputWeights = []
 
-        self.gradient = 0.0
-        self.outputValue = 0
+        for c in range(0, numOutputs):
+            self.m_outputWeights.append(Connection())
+            self.m_outputWeights[len(self.m_outputWeights) - 1].weight = random.uniform(0.0, 1.0)
 
-        self.neuronNumber = neuronNumber
+        self.m_myIndex = myIndex
 
-        for i in range(0, previousLayer):
-            if previousLayer == 0:
-                self.weights.append(1)
-            else:
-                self.weights.append(random.uniform(0.0, 1.0))
 
-        for w in self.weights:
-            self.deltaWeights.append(0)
+    def getOutputVal(self):
+        return self.m_outputVal
 
-        assert(len(self.weights) == len(self.deltaWeights))
 
-    # Get the output value
-    def getOutputValue(self):
-        return self.outputValue
+    def setOutputVal(self, val):
+        self.m_outputVal = val
 
-    # Manually set the output value
-    def setOutputValue(self, outputValue):
-        self.outputValue = outputValue
 
-    # Given inputs, will apply connection weights to these input and return the resulting sigmoidial value
-    def feedForward(self, previousLayer):
+    def updateInputWeights(self, prevLayer):
 
-        sum = 0.0
+        # The weights to be updated are in the Connection container in the neurons in the preceding layer
+        for n in range(0, len(prevLayer)):
+            neuron = prevLayer[n]
+            oldDeltaWeight = neuron.m_outputWeights[self.m_myIndex].deltaWeight
 
-        neuronNumber = 0
-        for neuron in previousLayer:
-            sum += neuron.getOutputValue() * self.weights[neuronNumber]  # output value * connection weight
-            neuronNumber += 1
+            newDeltaWeight = self.eta * neuron.getOutputVal() * self.m_gradient + self.alpha * oldDeltaWeight
 
-        self.outputValue = self.sigmoid(sum)  # apply transfer function
+            neuron.m_outputWeights[self.m_myIndex].deltaWeight = newDeltaWeight
+            neuron.m_outputWeights[self.m_myIndex].weight += newDeltaWeight
 
-    # Transfer function
-    def sigmoid(self, x):
-        return math.tanh(x)
 
-    # Transfer function derivative
-    def dsigmoid(self, y):
-        return 1 - y ** 2
-
-    # Calculates the gradients of the output layer for use in back propogation
-    def calculateOutputGradients(self, targetValue):
-
-        delta = targetValue - self.getOutputValue()
-        self.gradient = delta * self.dsigmoid(self.getOutputValue())
-
-    # Calculates the gradients from the hidden layers for use in back propogation
-    def calculateHiddenGradients(self, nextLayer):
-
-        sumDerivativeOfWeights = self.sumDOW(nextLayer)
-        self.gradient = sumDerivativeOfWeights * self.dsigmoid(self.getOutputValue())
-
-    # Finds the sum of the derivate of weights for use in back propogation
     def sumDOW(self, nextLayer):
 
         sum = 0.0
+
+        # Sum our contributions of the errors at the nodes we feed.
         for n in range(0, len(nextLayer) - 1):
-
-            try:
-                sum += self.weights[n] * nextLayer.neurons[n].gradient
-            except IndexError:
-                print len(self.weights), "and", len(nextLayer.neurons)
-
+            sum += self.m_outputWeights[n].weight * nextLayer[n].m_gradient
         return sum
 
-    # Given the previous layer, will adjust input weights in accordance with gradient and delta weight
-    def updateInputWeights(self, previousLayer):
 
-        for n in range(0, len(previousLayer)):
-            current = previousLayer[n]
-
-            try:
-
-                oldDeltaWeight = current.deltaWeights[self.neuronNumber]
-                newDeltaWeight = self.eta * current.getOutputValue() * self.gradient + self.alpha * oldDeltaWeight
-                current.deltaWeights[self.neuronNumber] = newDeltaWeight
-                current.weights[self.neuronNumber] += newDeltaWeight
-            except IndexError:
-                print "Attempting to get ", self.neuronNumber, "out of list of size", len(current.deltaWeights)
+    def transferFunction(self, x):
+        return math.tanh(x)
 
 
-    # Get string representation of neuron
+    def transferFunctionDerivative(self, x):
+        return 1.0 - x * x
+
+
+    def calcHiddenGradients(self, nextLayer):
+        dow = self.sumDOW(nextLayer)
+        self.m_gradient = dow * self.transferFunctionDerivative(self.m_outputVal)
+
+
+    def calcOutputGradients(self, targetVal):
+        self.delta = targetVal - self.m_outputVal
+        self.m_gradient = self.delta * self.transferFunctionDerivative(self.m_outputVal)
+
+
+    def feedForward(self, prevLayer):
+
+        sum = 0.0
+        # Sum the previous layer's outputs (which are our inputs) include the bias node from the previous layer.
+
+        for n in range(0, len(prevLayer)):
+            sum += prevLayer[n].getOutputVal() * prevLayer[n].m_outputWeights[self.m_myIndex].weight
+
+        self.m_outputVal = self.transferFunction(sum)
+
     def __str__(self):
-
-        s = "( "
-
-        for w in range(0, len(self.weights)):
-            s += "{0:.2f}".format(self.weights[w]) + " "
-
-        s += ")"
-
-        return s
+        ret = "( "
+        for w in self.m_outputWeights:
+            ret += "{0:.2f}".format(w.weight) + " "
+        ret += ")"
+        return ret
