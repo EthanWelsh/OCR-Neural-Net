@@ -1,6 +1,7 @@
 from Net import *
 import random
 
+
 def trainNet(net, inputValues, expectedOutputValues):
     net.feedForward(inputValues)
     net.backProp(expectedOutputValues)
@@ -49,7 +50,6 @@ def trainIO(net):
 
 
 def printResults(net):
-
     ins = list()
     ins.append(1)
     ins.append(0)
@@ -74,6 +74,7 @@ def printResults(net):
     net.feedForward(ins)
     print("0 ^ 0 == 0 ==", net.getResults()[0])
 
+
 topo = list()
 topo.append(2)
 topo.append(2)
@@ -82,7 +83,6 @@ topo.append(1)
 net = Net(topo)
 
 print(net)
-
 
 for i in range(0, 1000):
     r = random.randint(0, 3)

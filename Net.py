@@ -3,13 +3,12 @@ from Neuron import *
 Layer = []
 
 class Net:
-
     def __init__(self, topology):
 
         self.m_error = 0.0
         self.m_recentAverageError = 0.0
         self.m_recentAverageSmoothingFactor = 0.0
-        self.m_recentAverageSmoothingFactor = 100.0 # Number of training samples to average over
+        self.m_recentAverageSmoothingFactor = 100.0  # Number of training samples to average over
         self.m_layers = []
 
         numLayers = len(topology)
@@ -35,6 +34,7 @@ class Net:
             lastNeuronIndex = len(self.m_layers[lastIndex]) - 1
             self.m_layers[lastIndex][lastNeuronIndex].setOutputVal(1.0)
 
+
     def getResults(self):
         results = []
         for n in range(0, len(self.m_layers[len(self.m_layers) - 1]) - 1):
@@ -45,7 +45,6 @@ class Net:
     def backProp(self, targetVals):
 
         # Calculate overall net error (RMS of output neuron errors)
-
         outputLayer = self.m_layers[len(self.m_layers) - 1]
         self.m_error = 0.0
 
@@ -53,11 +52,12 @@ class Net:
             delta = targetVals[n] - outputLayer[n].getOutputVal()
             self.m_error += delta * delta
 
-        self.m_error /= len(outputLayer) - 1 # get average error squared
-        self.m_error = math.sqrt(self.m_error) # RMS
+        self.m_error /= len(outputLayer) - 1  # get average error squared
+        self.m_error = math.sqrt(self.m_error)  # RMS
 
         # Implement a recent average measurement
-        self.m_recentAverageError = (self.m_recentAverageError * self.m_recentAverageSmoothingFactor + self.m_error) / (self.m_recentAverageSmoothingFactor + 1.0)
+        self.m_recentAverageError = (self.m_recentAverageError * self.m_recentAverageSmoothingFactor + self.m_error) / (
+        self.m_recentAverageSmoothingFactor + 1.0)
 
         # Calculate output layer gradients
         for n in range(0, len(outputLayer) - 1):
@@ -87,7 +87,7 @@ class Net:
 
     def feedForward(self, inputVals):
 
-        assert(len(inputVals) == len(self.m_layers[0]) - 1)
+        assert (len(inputVals) == len(self.m_layers[0]) - 1)
 
         # Assign (latch) the input values into the input neurons
         for i in range(0, len(inputVals)):
@@ -100,6 +100,7 @@ class Net:
                 self.m_layers[layerNum][n].feedForward(prevLayer)
                 n += 1
             layerNum += 1
+
 
     def __str__(self):
 
