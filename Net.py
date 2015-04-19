@@ -1,86 +1,112 @@
-from Layer import *
+from Neuron import *
 
+Layer = []
 
 class Net:
-    m_error = 0.0
 
     def __init__(self, topology):
 
-        if len(topology) < 3:
-            print("Error. Invalid net topology. Net must have at least one input, output, and hidden layer.")
-            exit(-1)
+        self.m_error = 0.0
+        self.m_recentAverageError = 0.0
+        self.m_recentAverageSmoothingFactor = 0.0
+        self.m_recentAverageSmoothingFactor = 100.0 # Number of training samples to average over
+        self.m_layers = []
 
-        self.layers = list()
+        numLayers = len(topology)
 
-        self.layers.append(Layer(topology[0]))
+        for layerNum in range(0, numLayers):
 
-        self.input = self.layers[0]
-        prevLayer = self.input
+            self.m_layers.append([])
 
-        for i in range(1, len(topology)):
-            sizeOfLayer = topology[i]
-            self.layers.append(Layer(sizeOfLayer, prevLayer))
-            prevLayer = self.layers[len(self.layers) - 1]
+            if layerNum == len(topology) - 1:
+                numOutputs = 0
+            else:
+                numOutputs = topology[layerNum + 1]
 
-        self.output = self.layers[len(topology) - 1]
+            # We have a new layer, now fill it with neurons, and
+            # add a bias neuron in each layer.
+            for neuronNum in range(0, topology[layerNum] + 1):
+                lastIndex = len(self.m_layers) - 1
+                self.m_layers[lastIndex].append(Neuron(numOutputs, neuronNum))
 
-    # Given inputs, propagate through net and produce outputs
-    def feedForward(self, inputValues):
+            # Force the bias node's output to 1.0 (it was the last neuron pushed in this layer):
 
-        if len(inputValues) != len(self.input) - 1:
-            print "Error! You gave", len(inputValues), "input values, but I have", len(self.input) - 1, "inputs."
-            return
-
-        for n in range(0, len(self.input) - 1):  # set inputs
-            self.input[n].setOutputValue(inputValues[n])
-
-        for layer in range(1, len(self.layers)):  # for every layer
-            for neuron in self.layers[layer]:  # feedForward every neuron
-                neuron.feedForward(self.layers[layer - 1])
-
-    # Express target values for the current input and adjusts network accordingly
-    def backProp(self, targetValues):
-
-        # Calculate RMS of output neuron errors
-        for outputNeuron in range(0, len(self.output) - 1):
-            delta = targetValues[outputNeuron] - self.output[outputNeuron].getOutputValue()
-            Net.m_error += delta * delta
-
-        Net.m_error /= len(self.output) - 1
-        Net.m_error = math.sqrt(Net.m_error)
-
-        # Calculate output layer gradients
-        for outputNeuron in range(0, len(self.output) - 1):
-            self.output[outputNeuron].calculateOutputGradients(targetValues[outputNeuron])
-
-        # Calculate hidden layer gradients
-        layerNumber = len(self.layers) - 2 # start from rightmost hidden layer
-
-        while layerNumber > 0:
-            thisLayer = self.layers[layerNumber]
-            nextLayer = self.layers[layerNumber + 1]
-
-            for neuron in thisLayer:
-                neuron.calculateHiddenGradients(nextLayer)
-
-            layerNumber -= 1
-
-        # Update connection weights
-        layerNumber = len(self.layers) - 1 # start at the output layer
-        while layerNumber > 1:
-            currentLayer = self.layers[layerNumber]
-            previousLayer = self.layers[layerNumber - 1]
-
-            for neuron in currentLayer:
-                neuron.updateInputWeights(previousLayer)
-
-            layerNumber -= 1
+            lastIndex = len(self.m_layers) - 1
+            lastNeuronIndex = len(self.m_layers[lastIndex]) - 1
+            self.m_layers[lastIndex][lastNeuronIndex].setOutputVal(1.0)
 
     def getResults(self):
-        return self.output
+        results = []
+        for n in range(0, len(self.m_layers[len(self.m_layers) - 1]) - 1):
+            results.append(self.m_layers[len(self.m_layers) - 1][n].getOutputVal())
+        return results
+
+
+    def backProp(self, targetVals):
+
+        # Calculate overall net error (RMS of output neuron errors)
+
+        outputLayer = self.m_layers[len(self.m_layers) - 1]
+        self.m_error = 0.0
+
+        for n in range(0, len(outputLayer) - 1):
+            delta = targetVals[n] - outputLayer[n].getOutputVal()
+            self.m_error += delta * delta
+
+        self.m_error /= len(outputLayer) - 1 # get average error squared
+        self.m_error = math.sqrt(self.m_error) # RMS
+
+        # Implement a recent average measurement
+        self.m_recentAverageError = (self.m_recentAverageError * self.m_recentAverageSmoothingFactor + self.m_error) / (self.m_recentAverageSmoothingFactor + 1.0)
+
+        # Calculate output layer gradients
+        for n in range(0, len(outputLayer) - 1):
+            outputLayer[n].calcOutputGradients(targetVals[n])
+
+        # Calculate hidden layer gradients
+        layerNum = len(self.m_layers) - 2
+
+        while layerNum > 0:
+            hiddenLayer = self.m_layers[layerNum]
+            nextLayer = self.m_layers[layerNum + 1]
+
+            for n in range(0, len(hiddenLayer)):
+                hiddenLayer[n].calcHiddenGradients(nextLayer)
+
+            layerNum -= 1
+
+        layerNum = len(self.m_layers) - 1
+        while layerNum > 0:
+            layer = self.m_layers[layerNum]
+            prevLayer = self.m_layers[layerNum - 1]
+
+            for n in range(0, len(layer) - 1):
+                layer[n].updateInputWeights(prevLayer)
+            layerNum -= 1
+
+
+    def feedForward(self, inputVals):
+
+        assert(len(inputVals) == len(self.m_layers[0]) - 1)
+
+        # Assign (latch) the input values into the input neurons
+        for i in range(0, len(inputVals)):
+            self.m_layers[0][i].setOutputVal(inputVals[i])
+
+        # forward propagate
+        for layerNum in range(1, len(self.m_layers)):
+            prevLayer = self.m_layers[layerNum - 1]
+            for n in range(0, len(self.m_layers[layerNum]) - 1):
+                self.m_layers[layerNum][n].feedForward(prevLayer)
+                n += 1
+            layerNum += 1
 
     def __str__(self):
-        s = ""
-        for layer in self.layers:
-            s += str(layer) + "\n"
-        return s
+
+        ret = ""
+        for layer in self.m_layers:
+            for neuron in layer:
+                ret += str(neuron)
+            ret += "\n"
+
+        return ret
