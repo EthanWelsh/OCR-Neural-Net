@@ -8,92 +8,46 @@ def trainNet(net, inputValues, expectedOutputValues):
 
 
 def trainII(net):
-    ins = list()
-    outs = list()
-    ins.append(1)
-    ins.append(1)
-    outs.append(0)
-    trainNet(net, ins, outs)
+    trainNet(net, [1, 1], [0])
 
 
 def trainOO(net):
-    ins = list()
-    outs = list()
-    ins.append(0)
-    ins.append(0)
-    outs.append(0)
-    trainNet(net, ins, outs)
+    trainNet(net, [0, 0], [0])
 
 
 def trainOI(net):
-    ins = list()
-    outs = list()
-
-    ins.append(0)
-    ins.append(1)
-
-    outs.append(1)
-
-    trainNet(net, ins, outs)
+    trainNet(net, [0, 1], [1])
 
 
 def trainIO(net):
-    ins = list()
-    outs = list()
-
-    ins.append(1)
-    ins.append(0)
-
-    outs.append(1)
-
-    trainNet(net, ins, outs)
+    trainNet(net, [1, 0], [1])
 
 
 def printResults(net):
-    ins = list()
-    ins.append(1)
-    ins.append(0)
-    net.feedForward(ins)
+
+    net.feedForward([1, 0])
     print "1 ^ 0 == 1 ==", "{0:.2f}".format(net.getResults()[0])
 
-    ins = list()
-    ins.append(0)
-    ins.append(1)
-    net.feedForward(ins)
+    net.feedForward([0, 1])
     print "0 ^ 1 == 1 ==", "{0:.2f}".format(net.getResults()[0])
 
-    ins = list()
-    ins.append(1)
-    ins.append(1)
-    net.feedForward(ins)
+    net.feedForward([1, 1])
     print "1 ^ 1 == 0 ==", "{0:.2f}".format(net.getResults()[0])
 
-    ins = list()
-    ins.append(0)
-    ins.append(0)
-    net.feedForward(ins)
+    net.feedForward([0, 0])
     print "0 ^ 0 == 0 ==", "{0:.2f}".format(net.getResults()[0])
 
-
-topo = list()
-topo.append(2)
-topo.append(3)
-topo.append(3)
-topo.append(1)
-net = Net(topo)
+net = Net([2, 3, 3, 1])
 
 print(net)
 
 for i in range(0, 100000):
     r = random.randint(0, 3)
-    if r == 0:
-        trainII(net)
-    elif r == 1:
-        trainIO(net)
-    elif r == 2:
-        trainOI(net)
-    else:
-        trainOO(net)
+
+    if r == 0:      trainII(net)
+    elif r == 1:    trainIO(net)
+    elif r == 2:    trainOI(net)
+    else:           trainOO(net)
 
     if i % 10000 == 0:
         printResults(net)

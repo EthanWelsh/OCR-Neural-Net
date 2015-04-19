@@ -13,7 +13,6 @@ class Neuron:
     alpha = 0.5     # momentum, multiplier of last deltaWeight
 
     def __init__(self, numOutputs, myIndex):
-
         self.m_outputWeights = []
 
         for c in range(0, numOutputs):
@@ -32,7 +31,6 @@ class Neuron:
 
 
     def updateInputWeights(self, prevLayer):
-
         # The weights to be updated are in the Connection container in the neurons in the preceding layer
         for n in range(0, len(prevLayer)):
             neuron = prevLayer[n]
@@ -45,7 +43,6 @@ class Neuron:
 
 
     def sumDOW(self, nextLayer):
-
         sum = 0.0
 
         # Sum our contributions of the errors at the nodes we feed.
@@ -73,7 +70,6 @@ class Neuron:
 
 
     def feedForward(self, prevLayer):
-
         sum = 0.0
         # Sum the previous layer's outputs (which are our inputs) include the bias node from the previous layer.
 
@@ -81,6 +77,7 @@ class Neuron:
             sum += prevLayer[n].getOutputVal() * prevLayer[n].m_outputWeights[self.m_myIndex].weight
 
         self.m_outputVal = self.transferFunction(sum)
+
 
     def __str__(self):
         ret = "( "

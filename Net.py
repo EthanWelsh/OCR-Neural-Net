@@ -5,14 +5,12 @@ Layer = []
 class Net:
 
     def __init__(self, topology):
-
         self.m_error = 0.0
         self.m_layers = []
 
         numLayers = len(topology)
 
         for layerNum in range(0, numLayers):
-
             self.m_layers.append([])
 
             if layerNum == len(topology) - 1:
@@ -44,7 +42,6 @@ class Net:
 
 
     def feedForward(self, inputVals):
-
         assert(len(inputVals) == len(self.inputLayer) - 1)
 
         # Assign (latch) the input values into the input neurons
@@ -61,9 +58,7 @@ class Net:
 
 
     def backProp(self, targetVals):
-
         # Calculate overall net error (RMS of output neuron errors)
-
         self.m_error = 0.0
 
         for n in range(0, len(self.outputLayer) - 1):
@@ -90,6 +85,7 @@ class Net:
             layerNum -= 1
 
         layerNum = len(self.m_layers) - 1
+
         while layerNum > 0:
             layer = self.m_layers[layerNum]
             prevLayer = self.m_layers[layerNum - 1]
@@ -100,7 +96,6 @@ class Net:
 
 
     def __str__(self):
-
         ret = ""
         for layer in self.m_layers:
             for neuron in layer:
