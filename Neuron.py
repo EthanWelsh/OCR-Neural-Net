@@ -17,15 +17,16 @@ class Neuron:
 
         self.neuronNumber = neuronNumber
 
-        if previousLayer == 0:
-            self.weights.append(1)
-        else:
-            # Give a random weight between 0 and 1 for each input
-            for i in range(0, previousLayer):
+        for i in range(0, previousLayer):
+            if previousLayer == 0:
+                self.weights.append(1)
+            else:
                 self.weights.append(random.uniform(0.0, 1.0))
 
         for w in self.weights:
             self.deltaWeights.append(0)
+
+        assert(len(self.weights) == len(self.deltaWeights))
 
     # Get the output value
     def getOutputValue(self):
@@ -71,25 +72,30 @@ class Neuron:
     def sumDOW(self, nextLayer):
 
         sum = 0.0
-        for neuron in range(0, len(nextLayer) - 1):
-            thisWeight = self.weights[neuron]
-            gradientToNextLayer = nextLayer[neuron].gradient
+        for n in range(0, len(nextLayer) - 1):
 
-            sum += thisWeight * gradientToNextLayer
+            try:
+                sum += self.weights[n] * nextLayer.neurons[n].gradient
+            except IndexError:
+                print len(self.weights), "and", len(nextLayer.neurons)
+
         return sum
 
     # Given the previous layer, will adjust input weights in accordance with gradient and delta weight
     def updateInputWeights(self, previousLayer):
+
         for n in range(0, len(previousLayer)):
             current = previousLayer[n]
 
-            # oldDeltaWeight = current.weights[self.neuronNumber] # weight from current to us
-            oldDeltaWeight = self.deltaWeights[current.neuronNumber]  # weight from current to us
+            try:
 
-            newDeltaWeight = self.eta * current.getOutputValue() * self.gradient + self.alpha * oldDeltaWeight
+                oldDeltaWeight = current.deltaWeights[self.neuronNumber]
+                newDeltaWeight = self.eta * current.getOutputValue() * self.gradient + self.alpha * oldDeltaWeight
+                current.deltaWeights[self.neuronNumber] = newDeltaWeight
+                current.weights[self.neuronNumber] += newDeltaWeight
+            except IndexError:
+                print "Attempting to get ", self.neuronNumber, "out of list of size", len(current.deltaWeights)
 
-            self.deltaWeights[current.neuronNumber] = newDeltaWeight
-            self.weights[current.neuronNumber] += newDeltaWeight
 
     # Get string representation of neuron
     def __str__(self):

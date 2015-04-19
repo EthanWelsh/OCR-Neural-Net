@@ -4,7 +4,6 @@ import random
 
 def trainNet(net, inputValues, expectedOutputValues):
     net.feedForward(inputValues)
-    results = net.getResults()
     net.backProp(expectedOutputValues)
 
 
@@ -73,9 +72,10 @@ def printResults(net):
 topo = list()
 topo.append(2)
 topo.append(3)
-topo.append(3)
+topo.append(4)
 topo.append(1)
 net = Net(topo)
+print(net)
 
 for i in range(0, 500):
     r = random.randint(0, 3)
@@ -89,8 +89,3 @@ for i in range(0, 500):
         trainOO(net)
 
 printResults(net)
-
-
-
-
-

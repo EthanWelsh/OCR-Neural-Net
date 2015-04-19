@@ -27,6 +27,10 @@ class Net:
     # Given inputs, propagate through net and produce outputs
     def feedForward(self, inputValues):
 
+        if len(inputValues) != len(self.input) - 1:
+            print "Error! You gave", len(inputValues), "input values, but I have", len(self.input) - 1, "inputs."
+            return
+
         for n in range(0, len(self.input) - 1):  # set inputs
             self.input[n].setOutputValue(inputValues[n])
 
@@ -50,7 +54,7 @@ class Net:
             self.output[outputNeuron].calculateOutputGradients(targetValues[outputNeuron])
 
         # Calculate hidden layer gradients
-        layerNumber = len(self.layers) - 2
+        layerNumber = len(self.layers) - 2 # start from rightmost hidden layer
 
         while layerNumber > 0:
             thisLayer = self.layers[layerNumber]
@@ -62,8 +66,8 @@ class Net:
             layerNumber -= 1
 
         # Update connection weights
-        layerNumber = len(self.layers) - 1
-        while layerNumber > 0:
+        layerNumber = len(self.layers) - 1 # start at the output layer
+        while layerNumber > 1:
             currentLayer = self.layers[layerNumber]
             previousLayer = self.layers[layerNumber - 1]
 
