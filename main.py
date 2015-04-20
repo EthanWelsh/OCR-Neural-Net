@@ -1,17 +1,42 @@
 from Net import *
 import random
 
-o = [1, 1, 1, 1, 1,
+def printList(list):
+    ret = ""
+    for i in list:
+        ret += "{0:.1f}".format(i) + " "
+
+    return ret
+
+a = [0, 0, 1, 0, 0,
+     0, 1, 0, 1, 0,
+     1, 1, 1, 1, 1,
      1, 0, 0, 0, 1,
-     1, 0, 0, 0, 1,
-     1, 0, 0, 0, 1,
+     1, 0, 0, 0, 1]
+
+b = [1, 1, 1, 0, 0,
+     1, 0, 0, 1, 0,
+     1, 0, 1, 0, 0,
+     1, 0, 0, 1, 0,
+     1, 1, 1, 0, 0]
+
+c = [1, 1, 1, 1, 1,
+     1, 0, 0, 0, 0,
+     1, 0, 0, 0, 0,
+     1, 0, 0, 0, 0,
      1, 1, 1, 1, 1]
 
-x = [1, 0, 0, 0, 1,
-     0, 1, 0, 1, 0,
-     0, 0, 1, 0, 0,
-     0, 1, 0, 1, 0,
-     1, 0, 0, 0, 1]
+d = [1, 0, 0, 0, 0,
+     1, 1, 0, 0, 0,
+     1, 0, 1, 0, 0,
+     1, 0, 1, 0, 0,
+     1, 1, 0, 0, 0]
+
+e = [1, 1, 1, 1, 0,
+     1, 0, 0, 0, 0,
+     1, 1, 1, 0, 0,
+     1, 0, 0, 0, 0,
+     1, 1, 1, 1, 0]
 
 def trainNet(net, inputValues, expectedOutputValues):
     net.feedForward(inputValues)
@@ -19,24 +44,38 @@ def trainNet(net, inputValues, expectedOutputValues):
 
 def printResults(net):
 
-    net.feedForward(o)
-    print "O:", "{0:.10f}".format(net.getResults()[0])
+    net.feedForward(a)
+    print "A: ", printList(net.getResults())
 
-    net.feedForward(x)
-    print "X:", "{0:.10f}".format(net.getResults()[0])
+    net.feedForward(b)
+    print "B: ", printList(net.getResults())
 
-net = Net([25, 5, 1])
+    net.feedForward(c)
+    print "C: ", printList(net.getResults())
+
+    net.feedForward(d)
+    print "D: ", printList(net.getResults())
+
+    net.feedForward(e)
+    print "E: ", printList(net.getResults())
+
+net = Net([25, 5, 5])
 
 print(net)
 
-for i in range(0, 100000):
-    r = random.randint(0, 1)
+for i in range(0, 1000000):
+    r = random.randint(0, 4)
 
     if r == 0:
-        trainNet(net, o, [0])
+        trainNet(net, a, [0, 0, 0, 0, 1])
     elif r == 1:
-        trainNet(net, x, [1])
-
+        trainNet(net, b, [0, 0, 0, 1, 0])
+    elif r == 2:
+        trainNet(net, c, [0, 0, 1, 0, 0])
+    elif r == 3:
+        trainNet(net, d, [0, 1, 0, 0, 0])
+    elif r == 4:
+        trainNet(net, e, [1, 0, 0, 0, 0])
 
     if i % 10000 == 0:
         printResults(net)
