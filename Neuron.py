@@ -19,7 +19,7 @@ class Neuron:
 
         for c in range(0, numOutputs):
             self.m_outputWeights.append(Connection())
-            self.m_outputWeights[len(self.m_outputWeights) - 1].weight = random.uniform(0.0, 1.0)
+            self.m_outputWeights[len(self.m_outputWeights) - 1].weight = random.uniform(-1.0, 1.0)
 
         self.m_myIndex = myIndex
 
