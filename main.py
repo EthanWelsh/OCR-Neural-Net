@@ -5,81 +5,77 @@ import random
 import sys
 
 
-def printList(list):
+def print_list(list_to_print):
     ret = ""
-    for i in list:
+    for i in list_to_print:
         ret += "{0:.1f}".format(i) + " "
 
     return ret
 
-def trainNet(net, inputValues, expectedOutputValues):
-    net.feedForward(inputValues)
-    net.backProp(expectedOutputValues)
+
+def train_net(net, input_vals, expected_output_values):
+    net.feedForward(input_vals)
+    net.backProp(expected_output_values)
 
 
-def getTrainingData():
-    trainValues = {}
+def get_training_data():
+    train_values = {}
     index = 0
 
     for char in ascii_uppercase:
-        bm = font.bitmap[char]
-        outputVal = []
+        output_val = []
 
         for i in range(26):
             if i == index:
-                outputVal.append(1)
+                output_val.append(1)
             else:
-                outputVal.append(-1)
+                output_val.append(-1)
 
         index += 1
-        trainValues[char] = outputVal
+        train_values[char] = output_val
 
-    return trainValues
+    return train_values
 
 
-def whatChar(netOutput):
+def what_char(net_Output):
 
-    positionOfBit = 0
+    bit_position = 0
 
     s = ""
-    for bit in netOutput:
-        if bit > .7:
-            s += "(" + ascii_uppercase[positionOfBit] + ":" + "{0:.2f}".format(bit) + ")"
+    for bit in net_Output:
+        if bit > 0:
+            s += "(" + ascii_uppercase[bit_position] + ":" + "{0:.2f}".format(bit) + ")"
 
-        positionOfBit += 1
+        bit_position += 1
 
     return s
 
 
-def randomLetter():
+def random_letter():
     return random.choice(ascii_uppercase)
 
 
-font = Font.Font("fontLibrary/col.png", 2, 13, 15)
-outputValues = getTrainingData()
+def main():
+    font = Font.Font("fontLibrary/col.png", 2, 13, 15)
 
-net = Net.Net([225, 26, 26])
+    outputValues = get_training_data()
+    net = Net.Net([225, 150, 26])
+    print ((("-"*9) + "|") * 10)
 
-i = 0
+    samples = 1000
+    for i in range(samples):
+        if i % (samples * .01) == 0 and i != 0:
+            sys.stdout.write('=')
 
-print ((("-"*9) + "|") * 10)
+        randLetter = random_letter()
+        train_net(net, font.bitmap[randLetter], outputValues[randLetter])
 
-samples = 100000
+    sys.stdout.write('=')
+
+    for char in ascii_uppercase:
+        net.feedForward(font.bitmap[char])
+        print char + ": " + what_char(net.getResults())
 
 
-
-for i in range(samples):
-
-    if i % (samples * .01) == 0 and i != 0:
-        sys.stdout.write('=')
-
-    randLetter = randomLetter()
-    trainNet(net, font.bitmap[randLetter], outputValues[randLetter])
-
-sys.stdout.write('=')
-
-print
-
-for char in ascii_uppercase:
-    net.feedForward(font.bitmap[char])
-    print char + ": " + whatChar(net.getResults())
+if __name__ == '__main__':
+    main()
