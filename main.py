@@ -1,8 +1,9 @@
-import Font
-import Net
 from string import ascii_uppercase
 import random
 import sys
+
+import Font
+import Net
 
 
 def print_list(list_to_print):
@@ -14,8 +15,8 @@ def print_list(list_to_print):
 
 
 def train_net(net, input_vals, expected_output_values):
-    net.feedForward(input_vals)
-    net.backProp(expected_output_values)
+    net.feed_forward(input_vals)
+    net.back_prop(expected_output_values)
 
 
 def get_training_data():
@@ -38,7 +39,6 @@ def get_training_data():
 
 
 def what_char(net_Output):
-
     bit_position = 0
 
     s = ""
@@ -60,7 +60,7 @@ def main():
 
     outputValues = get_training_data()
     net = Net.Net([225, 150, 26])
-    print ((("-"*9) + "|") * 10)
+    print ((("-" * 9) + "|") * 10)
 
     samples = 1000
     for i in range(samples):
@@ -73,8 +73,8 @@ def main():
     sys.stdout.write('=')
 
     for char in ascii_uppercase:
-        net.feedForward(font.bitmap[char])
-        print char + ": " + what_char(net.getResults())
+        net.feed_forward(font.bitmap[char])
+        print char + ": " + what_char(net.get_results())
 
 
 if __name__ == '__main__':
