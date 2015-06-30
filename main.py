@@ -2,8 +2,8 @@ from string import ascii_uppercase
 import random
 import sys
 
-import Font
-import Net
+import font
+import net
 
 
 def print_list(list_to_print):
@@ -56,10 +56,10 @@ def random_letter():
 
 
 def main():
-    font = Font.Font("fontLibrary/col.png", 2, 13, 15)
+    font = font.Font("fontLibrary/col.png", 2, 13, 15)
 
     outputValues = get_training_data()
-    net = Net.Net([225, 150, 26])
+    net = net.Net([225, 150, 26])
     print ((("-" * 9) + "|") * 10)
 
     samples = 1000
